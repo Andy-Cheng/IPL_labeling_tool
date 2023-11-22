@@ -3,17 +3,17 @@ class Config{
     //disableLabels: true,
     enablePreload = false;
     color_points = "mono";
-    enableRadar = true;
+    enableRadar = false;
     enableAuxLidar = false;
     enableDynamicGroundLevel = true;
-    conf_threshold = 0.3;
-    radar_name = "polar_top_5";
+    conf_threshold = 0.1;
+    radar_name = "cart_cacfar_15_5_150_150"; //cart_cacfar_15_5_150_150
 
     coordinateSystem = 'utm';
 
     point_size = 1.8;
     point_brightness = 1.2;
-    box_opacity = 1;
+    box_opacity = 0.8;
     show_background = true;
     color_obj = "category";
     theme = "dark";
@@ -35,7 +35,7 @@ class Config{
     autoUpdateInterpolatedBoxes = true;
 
     hideId = false;
-    hideCategory = false;
+    hideCategory = true;
 
     moveStep = 0.01;  // ratio, percentage
     rotateStep = Math.PI/360;
@@ -43,6 +43,8 @@ class Config{
     ignoreDistantObject = true;
     
     ///editorCfg
+    disableGrid = true;
+    // disableRangeCircle = true;
 
     //disableSceneSelector = true;
     //disableFrameSelector = true;
@@ -50,8 +52,7 @@ class Config{
     //disableFastToolbox= true;
     //disableMainView= true;
     //disableMainImageContext = true;
-    //disableGrid = true;
-    //disableRangeCircle = true;
+
     //disableAxis = true;
     //disableMainViewKeyDown = true;
     //projectRadarToImage = true;

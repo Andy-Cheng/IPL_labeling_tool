@@ -32,12 +32,16 @@ from tools import check_labels  as check
 # sys.path.append(os.path.join(BASE_DIR, './tools'))
 # import tools.dataset_preprocess.crop_scene as crop_scene
 
+# with open('/home/andy/ipl/CenterRadarNet/color_table_hex.json', 'r') as f:
+#     tracking_id_2_color = json.load(f)
+
 label_path_name = "label"
 lidar_type = 'os2-64'
-prediction_file_path = '/home/andy/ipl/CenterPoint/work_dirs/kradar_HR_ZYX_4l/epoch_25/train_test_prediction_viz_format.json'
-gt_path = '/mnt/ssd1/kradar_dataset/labels/refined_v3_all_Radar_roi1_Sedan_BusorTruck_viz_format.json'
+prediction_file_path = '/mnt/nas_kradar/kradar_dataset/SCT_CVPR_Result/viz_format.json'
+gt_path = '/mnt/ssd1/kradar_dataset/labels/refined_v3_all_Radar_roi2_Sedan_BusorTruck_viz_format.json'
 
-viz_mode = 2 # 0: labeling mode (boxop enabled), 1: pred, 2: gt, 3: pred + gt
+
+viz_mode = 1 # 0: labeling mode (boxop enabled), 1: pred, 2: gt, 3: pred + gt
 
 prediction, gt = {}, {}
 
@@ -179,6 +183,8 @@ class Root(object):
       
 
 
+
+
     @cherrypy.expose    
     @cherrypy.tools.json_out()
     def load_annotation(self, scene, frame):
@@ -187,10 +193,18 @@ class Root(object):
         boxes = []
         frame = frame.split("_")[1]
         if scene in gt and frame in gt[scene]:
+          if scene == '5':
+            boxes = gt[scene][frame]
+            for box in boxes:
+              if box['obj_id'] == '194':
+                continue
+              if box['obj_id'] == '198':
+                box['color'] = '#ff006e'
+            gt[scene][frame] = boxes
           boxes += gt[scene][frame]
         if scene in prediction and frame in prediction[scene]:
           boxes += prediction[scene][frame]['objs']
-          split_type = prediction[scene][frame]['split']
+          split_type = prediction[scene][frame]['split'] if 'split' in prediction[scene][frame] else ''
       else:
         boxes = scene_reader.read_annotations(scene, frame)
       return {'boxes': boxes, 'split_type': split_type}

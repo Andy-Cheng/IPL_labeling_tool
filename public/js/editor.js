@@ -287,29 +287,45 @@ function Editor(editorUi, wrapperUi, editorCfg, data, name="editor"){
         ];
         
         var segments=64;
+        // for (var i = 0; i<segments; i++){
+        //     var theta1 = (2*Math.PI/segments) * i;
+        //     var x1 = Math.cos(theta1);
+        //     var y1 = Math.sin(theta1);
+
+        //     var theta2 = 2*Math.PI/segments * ((i+1)%segments);
+        //     var x2 = Math.cos(theta2);
+        //     var y2 = Math.sin(theta2);
+
+        //     body.push(x1,y1,h,x2,y2,h);
+        //     // body.push(0.5*x1,0.5*y1,h,0.5*x2,0.5*y2,h);
+        //     // body.push(2.0*x1,2.0*y1,h,2.0*x2,2.0*y2,h);
+        // }
+        var angleDelta = -110 * Math.PI / 180;
+        var initAngle = 55 * Math.PI / 180;
         for (var i = 0; i<segments; i++){
-            var theta1 = (2*Math.PI/segments) * i;
+            var theta1 = (angleDelta/segments) * i + initAngle;
             var x1 = Math.cos(theta1);
             var y1 = Math.sin(theta1);
 
-            var theta2 = 2*Math.PI/segments * ((i+1)%segments);
+            var theta2 = (angleDelta/segments) * (i+1) + initAngle;
             var x2 = Math.cos(theta2);
             var y2 = Math.sin(theta2);
 
             body.push(x1,y1,h,x2,y2,h);
-            body.push(0.5*x1,0.5*y1,h,0.5*x2,0.5*y2,h);
-            body.push(2.0*x1,2.0*y1,h,2.0*x2,2.0*y2,h);
+            // body.push(0.5*x1,0.5*y1,h,0.5*x2,0.5*y2,h);
+            // body.push(2.0*x1,2.0*y1,h,2.0*x2,2.0*y2,h);
         }
+        
 
         this.data.dbg.alloc();
         var bbox = new THREE.BufferGeometry();
         bbox.setAttribute( 'position', new THREE.Float32BufferAttribute(body, 3 ) );
         
         var box = new THREE.LineSegments( bbox, 
-            new THREE.LineBasicMaterial( { color: 0x888800, linewidth: 1, opacity: 0.5, transparent: true } ) );    
+            new THREE.LineBasicMaterial( { color: 0xff70a6, linewidth: 2, opacity: 0.5, transparent: true } ) );    
          
-        box.scale.x=60;
-        box.scale.y=60;
+        box.scale.x=80;
+        box.scale.y=80;
         box.scale.z=-3;
         box.position.x=0;
         box.position.y=0;
@@ -322,7 +338,7 @@ function Editor(editorUi, wrapperUi, editorCfg, data, name="editor"){
 
         var body = [];
         var degree = 55;
-        var range = 120;
+        var range = 80;
         var angle = degree * Math.PI / 180;
         var x1 = 0;
         var y1 = 0;
@@ -333,7 +349,7 @@ function Editor(editorUi, wrapperUi, editorCfg, data, name="editor"){
         var bbox = new THREE.BufferGeometry();
         bbox.setAttribute( 'position', new THREE.Float32BufferAttribute(body, 3 ) );
         var box = new THREE.LineSegments( bbox,
-            new THREE.LineBasicMaterial( { color: 0xF8DBCC, linewidth: 2, opacity: 0.5, transparent: true } ) );
+            new THREE.LineBasicMaterial( { color: 0xff70a6, linewidth: 2, opacity: 0.5, transparent: true } ) );
         
         box.scale.x = range;
         box.scale.y = range;
@@ -348,7 +364,7 @@ function Editor(editorUi, wrapperUi, editorCfg, data, name="editor"){
 
         var body = [];
         var degree = -55;
-        var range = 120;
+        var range = 80;
         var angle = degree * Math.PI / 180;
         var x1 = 0;
         var y1 = 0;
@@ -359,7 +375,7 @@ function Editor(editorUi, wrapperUi, editorCfg, data, name="editor"){
         var bbox = new THREE.BufferGeometry();
         bbox.setAttribute( 'position', new THREE.Float32BufferAttribute(body, 3 ) );
         var box = new THREE.LineSegments( bbox,
-            new THREE.LineBasicMaterial( { color: 0xF8DBCC, linewidth: 2, opacity: 0.5, transparent: true } ) );
+            new THREE.LineBasicMaterial( { color: 0xff70a6, linewidth: 2, opacity: 0.5, transparent: true } ) );
         
         box.scale.x = range;
         box.scale.y = range;
@@ -371,6 +387,44 @@ function Editor(editorUi, wrapperUi, editorCfg, data, name="editor"){
         this.auxLine2 = box;
         this.scene.add(box);
 
+        var body = [];
+        var degree = 55;
+        var range = 80;
+        var angle = degree * Math.PI / 180;
+        var x1 = 0;
+        var y1 = 0;
+        var x2 = Math.cos(angle);
+        var y2 = Math.sin(angle);
+        body.push(x1,y1,h,x2,y2,h);
+
+        var bbox = new THREE.BufferGeometry();
+        bbox.setAttribute( 'position', new THREE.Float32BufferAttribute(body, 3 ) );
+        var box = new THREE.LineSegments( bbox,
+            new THREE.LineBasicMaterial( { color: 0xff70a6, linewidth: 2, opacity: 0.5, transparent: true } ) );
+        
+        box.scale.x = range;
+        box.scale.y = range;
+        box.scale.z=-3;
+        box.position.x=0;
+        box.position.y=0;
+        box.position.z=0;
+        box.computeLineDistances();
+        this.auxLine1 = box;
+        this.scene.add(box);
+
+        // const planeGeometry = new THREE.PlaneGeometry(72, 30);
+        // const planeMaterial = new THREE.MeshBasicMaterial({
+        //     color: 0x57cc99,  // Green color, you can adjust as needed
+        //     // side: THREE.DoubleSide,
+        //     opacity: 0.8,    // 50% transparency
+        //     transparent: true
+        // });
+        // const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        
+        // // Position the plane at the center (36, 0)
+        // plane.position.set(36, 0, -3);
+        // this.rangeCircle = plane;
+        // this.scene.add(plane);
 
         
     };

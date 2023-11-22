@@ -146,10 +146,10 @@ def sus_to_kradar(input_json_file, dst_txt_name, original_txt_name):
     
 
 def sus_to_kradar_seq():
-    seq_to_skip = [] # [51, 52, 57, 58]
+    seq_to_skip = [51, 52, 57, 58] # [51, 52, 57, 58]
     seq_to_skip = [str(i) for i in seq_to_skip]
     seq_root = '/mnt/nas_kradar/kradar_dataset/dir_all'
-    src_dst_pairs = [ ('label', 'refined_label_all')]
+    src_dst_pairs = [ ('label', 'refined_label_latest')]
     original_label_folder = 'info_label'
     for seq_name in tqdm(sorted(os.listdir(seq_root))):
         if seq_name in seq_to_skip:
@@ -208,5 +208,5 @@ def rename_pcd():
                         os.rename(pcd_file, new_pcd_file)
 
 if __name__ == '__main__':
-    main()
-    # sus_to_kradar_seq()
+    # main()
+    sus_to_kradar_seq()

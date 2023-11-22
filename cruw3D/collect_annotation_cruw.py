@@ -32,36 +32,70 @@ def get_rdr_lidar_frame_difference(data_root, target_seqs):
         rdr_lidar_frame_difference[str(seq)] = int(line.split(',')[0])
     return rdr_lidar_frame_difference
 
-    
 
+obj_type_mapping_old = {
+    'Car': 'Car',
+    'Van': 'Car',
+    'Truck': 'Car',
+    'Bus': 'Car',
+    'Pedestrian': 'Pedestrian',
+    'Bicycle': 'Bicycle',
+    'BicycleRider': 'BicycleRider'
+}
 
-def get_labels(seq_frames, ds_root, rdr_lidar_frame_difference, label_dir_name='label'):
-    new_labels = []
-    for seq, frames in seq_frames.items():
+obj_type_mapping = {
+    'Car': 'Car',
+    'Van': 'Car',
+    'Truck': 'BusorTruck',
+    'Bus': 'BusorTruck',
+}
+
+def get_labels(ds_root, target_seqs, label_dir_name='label'):
+    seq_start_end = defaultdict(dict)
+    train_labels, test_labels = [], []
+    for seq in target_seqs:
         print(f'Now processing {seq}')
-        for frame_name in tqdm(frames):
-            label_path = os.path.join(ds_root, seq, label_dir_name, f'{frame_name}.json')
+        seq_start_end['train'][seq] = []
+        seq_start_end['test'][seq] = []
+        current_start_end = []
+        for frame_id in tqdm(range(2, 1798)):
+            label_path = os.path.join(ds_root, seq, label_dir_name, f'{frame_id:0>6}.json')
             if not os.path.exists(label_path):
-                print(f'{frame_name} has no label')
-                continue
-            with open(label_path, 'r') as label_file:
-                label = json.load(label_file)
-            objs = []
-            for obj in label:
-                if obj is None:
-                    continue
-                if int(obj['num_pcd_pts']) < 1:
-                    continue
-                psr = obj['psr']
-                xyz = list(psr['position'].values())
-                euler = list(psr['rotation'].values())
-                lwh = list(psr['scale'].values())
-                converted_obj = {'obj_id': obj['obj_id'], 'obj_type': obj['obj_type'], 'euler': euler, 'xyz': xyz, 'lwh': lwh, 'num_cfar_pts': obj['num_pcd_pts']}
-                objs.append(converted_obj)
-            rdr_frame = '{:0=5}'.format(int(frame_name) + rdr_lidar_frame_difference[seq])
-            label_frame = {'seq': seq, 'frame': frame_name, 'rdr_frame': rdr_frame, 'objs': objs}
-            new_labels.append(label_frame)
-    return new_labels
+                label = []
+            else:
+                with open(label_path, 'r') as label_file:
+                    label = json.load(label_file)
+                objs = []
+                for obj in label:
+                    if obj is None:
+                        continue
+                    psr = obj['psr']
+                    xyz = list(psr['position'].values())
+                    euler = list(psr['rotation'].values())
+                    lwh = list(psr['scale'].values())
+                    obj_type = obj['obj_type']
+                    if not obj_type in obj_type_mapping.keys():
+                        print(f'Unknown object type {obj_type}')
+                        continue
+                    converted_obj = {'obj_id': obj['obj_id'], 'obj_type': obj_type_mapping[obj_type], 'euler': euler, 'xyz': xyz, 'lwh': lwh}
+                    objs.append(converted_obj)
+            rdr_frame = f'{frame_id:0>6}'
+            label_frame = {'seq': seq, 'frame': rdr_frame, 'rdr_frame': rdr_frame, 'objs': objs}
+            if int((frame_id-2) / 150)%2 == 0: # every 150 frames belong test or train set
+                train_labels.append(label_frame)
+                if (frame_id-2) % 150 == 0:
+                    current_start_end = [len(train_labels)-1]
+                elif (frame_id-2) % 150 == 149:
+                    current_start_end.append(len(train_labels)-1)
+                    seq_start_end['train'][seq].append(current_start_end)
+            else:
+                test_labels.append(label_frame)
+                if (frame_id-2) % 150 == 0:
+                    current_start_end = [len(test_labels)-1]
+                elif (frame_id-2) % 150 == 149:
+                    current_start_end.append(len(test_labels)-1)
+                    seq_start_end['test'][seq].append(current_start_end)
+    return train_labels, test_labels, seq_start_end
 
 
 def get_gt_viz_format(seq_root, label_dir='label'):
@@ -214,30 +248,19 @@ def collect_original_label_format(data_root, src_dirs, dst_dir):
 
 
 if __name__ == '__main__':
-    # train_samples = '/home/andy/ipl/CenterPoint/configs/kradar/resources/split/train.txt'
-    # test_samples = '/home/andy/ipl/CenterPoint/configs/kradar/resources/split/test.txt'
-    # save_name = 'refined_v3numpoints.json'
-    # save_root_path = '/mnt/ssd1/kradar_dataset/labels'
-    # kradar_root = '/mnt/nas_kradar/kradar_dataset/dir_all'
-    # print(f'Start to preparing files in {save_root_path}')
-    # target_seq = [1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17,\
-    #    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,\
-    #    35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,\
-    #     53, 54, 55, 56]
-    # rdr_lidar_frame_difference = get_rdr_lidar_frame_difference(kradar_root, target_seq)
-    # train_seq_frames = get_target_seq_frames(train_samples, target_seq)
-    # print('Start preparing train label.')
-    # train_labels = get_labels(train_seq_frames, kradar_root, rdr_lidar_frame_difference, label_dir_name='label_numpcdpts')
-    # print('Finish train label generation.')
-    # print('Start preparing test label.')
-    # test_seq_frames = get_target_seq_frames(test_samples, target_seq)
-    # test_labels = get_labels(test_seq_frames, kradar_root, rdr_lidar_frame_difference, label_dir_name='label_numpcdpts')
-    # print('Finish test label generation.')
-    # print(f'Writing to {save_name}')
-    # output_labels = {} # {split_type: [{obj_type, obj_id, objs: []}]}
-    # output_labels['train'] = train_labels
-    # output_labels['test'] = test_labels
-    # with open(os.path.join(save_root_path, save_name), 'w') as output_labels_file:
-    #     json.dump(output_labels, output_labels_file, indent=2)
+    save_name = 'CRUW3DCarTruck.json'
+    save_root_path = '/mnt/ssd3/CRUW3D/labels'
+    cruw_root = '/mnt/ssd3/CRUW3D/seqs'
+    print(f'Start to preparing files in {save_root_path}')
+    target_seq = ['2021_1120_1616', '2021_1120_1618',  '2022_0203_1439', '2022_0203_1441', '2022_0203_1443', '2022_0203_1445', '2022_0217_1251', '2022_0217_1307', '2021_1120_1632', '2021_1120_1634'] 
+    train_labels, test_labels, seq_start_end  = get_labels(cruw_root, target_seq, label_dir_name='label')
+    print(f'Writing to {save_name}')
+    output_labels = {} # {split_type: [{obj_type, obj_id, objs: []}]}
+    output_labels['train'] = train_labels
+    output_labels['test'] = test_labels
+    with open(os.path.join(save_root_path, save_name), 'w') as output_labels_file:
+        json.dump(output_labels, output_labels_file, indent=2)
+    with open(os.path.join(save_root_path, 'cruw22_seq_start_end.json'), 'w') as output_file:
+        json.dump(seq_start_end, output_file, indent=2)
 
-    get_gt_viz_format_file(['/mnt/ssd1/kradar_dataset/labels/refined_v3_train_Radar_roi2_Sedan_BusorTruck.json', '/mnt/ssd1/kradar_dataset/labels/refined_v3_test_Radar_roi2_Sedan_BusorTruck.json'])
+    # get_gt_viz_format_file(['/mnt/ssd1/kradar_dataset/labels/refined_v3numpoints_train_Radar_roi1_Sedan_BusorTruck.json', '/mnt/ssd1/kradar_dataset/labels/refined_v3numpoints_test_Radar_roi1_Sedan_BusorTruck.json'])

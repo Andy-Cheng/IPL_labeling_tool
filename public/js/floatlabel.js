@@ -475,9 +475,10 @@ class FloatLabelManager {
         {                
             label.className = "float-label color-"+ (label.obj_track_id % 33);
         }
-        else // by id
+        else // by category
         {
             label.className = "float-label "+label.obj_type;
+            label.className = "float-label";
         }
         
         label.orgClassName = label.className;

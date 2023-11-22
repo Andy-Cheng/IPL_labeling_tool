@@ -69,15 +69,28 @@ function ViewManager(mainViewContainer, webglScene, webglMainScene, renderer, gl
     function create_main_view(scene, renderer, globalRenderFunc, container, on_box_changed){
         var view ={};
         
-        view.backgroundColor=　(document.documentElement.className == "theme-dark") ? new THREE.Color( 0.0, 0.0, 0.0 ) : new THREE.Color( 1.0, 1.0, 1.0 );
+        view.backgroundColor = (document.documentElement.className == "theme-dark") ? new THREE.Color( 0.0, 0.0, 0.0 ) : new THREE.Color( 1.0, 1.0, 1.0 );
         view.zoom_ratio = 1.0; //useless for mainview
             
         let camera = new THREE.PerspectiveCamera( 65, container.clientWidth / container.clientHeight, 1, 500 );
+
         camera.position.x = 0;
         camera.position.z = 50;
         camera.position.y = 0;
         camera.up.set( 0, 0, 1);
-        camera.lookAt( 50, 0, 0 );
+        camera.lookAt( 50, 0, 0);
+
+
+
+        // camera.position.x = -12.45563021638829 * 1.5;
+        // camera.position.y =  9.22294138751753 * 1.5;
+        // camera.position.z = 23.587694621408318 * 1.5;
+        // camera.up.set( 0, 0, 1);
+
+        // camera.rotation.x =  0;
+        // camera.rotation.y =  0;
+        // camera.rotation.z =  Math.PI/2;
+
         camera.name = "main view camera";
         view.camera_perspective = camera;
         view.camera = camera;
@@ -163,6 +176,16 @@ function ViewManager(mainViewContainer, webglScene, webglMainScene, renderer, gl
             this.renderer.setScissorTest( true );
 
             this.renderer.render( this.scene, camera );
+            // Get the position, rotation, and scale
+            
+            const position = camera.position;
+            const rotation = camera.rotation;
+            const scale = camera.scale;
+
+            // Log them out
+            console.log('Position:', position);
+            console.log('Rotation:', rotation);
+            console.log('Scale:', scale);
         };
 
 

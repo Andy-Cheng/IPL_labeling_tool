@@ -113,7 +113,7 @@ class ObjectCategory
             z: (target_color_hex % 256)/255.0,
         };
     }
-
+    
     get_obj_cfg_by_type(name){
         if (this.obj_type_map[name]){
             return this.obj_type_map[name];

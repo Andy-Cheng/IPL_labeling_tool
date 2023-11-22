@@ -203,6 +203,7 @@ function Images(sceneMeta, sceneName, frame){
                     _self.on_image_loaded();
                 };
                 frame = cam + "_" + frame.split("_")[1];
+                // frame = frame.split("_")[1];
                 _self.content[cam].src = 'data/' + sceneName + "/" + cam + '/'+ frame + sceneMeta.camera_ext;
                 console.log("image set")
             });

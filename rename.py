@@ -12,20 +12,22 @@ def read_frame_meta(label_file):
 
 def main():
     seq_root = '/mnt/nas_kradar/kradar_dataset/dir_all'
-    cam_name = 'cam-front-undistort'
-    for seq_name in os.listdir(seq_root):
+    cam_name = 'cam-front-undistort-2'
+    # for seq_name in os.listdir(seq_root):
+    for seq_name in ['11']:
         print('Now processing {}'.format(seq_name))
         seq_dir = os.path.join(seq_root, seq_name)
         cam_dir = os.path.join(seq_dir, cam_name)
-        tmp_cam_dir = os.path.join(seq_dir, 'cam-front-undistort-tmp')
-        if not os.path.exists(tmp_cam_dir):
-            os.rename(cam_dir, tmp_cam_dir)
+        tmp_cam_dir = os.path.join(seq_dir, 'cam-front')
+        # shutil.copytree(tmp_cam_dir, cam_dir)
+        # if not os.path.exists(tmp_cam_dir):
+        #     os.rename(cam_dir, tmp_cam_dir)
         info_label_dir = os.path.join(seq_dir, 'info_label')
         for txt_file in os.listdir(info_label_dir): 
             if txt_file.endswith('.txt'):
                 label_file = os.path.join(info_label_dir, txt_file)
                 os64_idx, cam_front_idx = read_frame_meta(label_file)
-                img_old_name = '{}_{:0=5}.png'.format(cam_name, cam_front_idx)
+                img_old_name = '{}_{:0=5}.png'.format('cam-front', cam_front_idx)
                 os.makedirs(cam_dir, exist_ok=True)
                 shutil.copy(os.path.join(tmp_cam_dir, img_old_name), os.path.join(cam_dir, '{}_{:0=5}.png'.format(cam_name, os64_idx)))
 
@@ -36,7 +38,7 @@ def main():
                 new_img_file = os.path.join(cam_dir, new_img_name)
                 img_file = os.path.join(cam_dir, img_name)
                 os.rename(img_file, new_img_file)
-# main()
+main()
 
 
 def copy_calib():
@@ -50,4 +52,4 @@ def copy_calib():
         os.makedirs(seq_calib_dir, exist_ok=True)
         shutil.copy(calib_file, os.path.join(seq_calib_dir, 'cam-front-undistort.json'))
 
-copy_calib()
+# copy_calib()

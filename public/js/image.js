@@ -127,7 +127,8 @@ function BoxImageContext(ui){
                 else // by id
                 {
                     let idx = (box.obj_track_id)?parseInt(box.obj_track_id): box.obj_local_id;
-                    target_color = globalObjectCategory.get_color_by_id(idx);
+                    // target_color = globalObjectCategory.get_color_by_id(idx);
+                    
                 }
 
 
@@ -673,7 +674,8 @@ class ImageContext extends MovableView{
 
         if (selected){
             svg.setAttribute("class", box.obj_type+" box-svg box-svg-selected");
-        } else{
+        } 
+        else{
             if (box.world.data.cfg.color_obj == "id")
             {
                 svg.setAttribute("class", "color-"+box.obj_track_id%33);
@@ -684,6 +686,10 @@ class ImageContext extends MovableView{
             }
         }
 
+        let hex_color = box.color;
+        let r = hex_color/256/256;
+        let g = hex_color/256 % 256;
+        let b = hex_color % 256;
                 
         var front_panel =  document.createElementNS("http://www.w3.org/2000/svg", 'polygon');
         svg.appendChild(front_panel);
@@ -692,6 +698,7 @@ class ImageContext extends MovableView{
                 return String(x)+","+y;
             })
         )
+
 
         /*
         var back_panel =  document.createElementNS("http://www.w3.org/2000/svg", 'polygon');
@@ -703,6 +710,43 @@ class ImageContext extends MovableView{
         )
         */
 
+
+        // var line =  document.createElementNS("http://www.w3.org/2000/svg", 'line');
+        // svg.appendChild(line);
+        // line.setAttribute("x1", imgfinal[0*2]);
+        // line.setAttribute("y1", imgfinal[0*2+1]);
+        // line.setAttribute("x2", imgfinal[3*2]);
+        // line.setAttribute("y2", imgfinal[3*2+1]);
+        // line.setAttribute("stroke-width", "10");
+        // line.setAttribute("stroke", `rgb(${r}, ${g}, ${b})`);
+
+        // var line =  document.createElementNS("http://www.w3.org/2000/svg", 'line');
+        // svg.appendChild(line);
+        // line.setAttribute("x1", imgfinal[1*2]);
+        // line.setAttribute("y1", imgfinal[1*2+1]);
+        // line.setAttribute("x2", imgfinal[2*2]);
+        // line.setAttribute("y2", imgfinal[2*2+1]);
+        // line.setAttribute("stroke-width", "10");
+        // line.setAttribute("stroke", `rgb(${r}, ${g}, ${b})`);
+
+        // var line =  document.createElementNS("http://www.w3.org/2000/svg", 'line');
+        // svg.appendChild(line);
+        // line.setAttribute("x1", imgfinal[0*2]);
+        // line.setAttribute("y1", imgfinal[0*2+1]);
+        // line.setAttribute("x2", imgfinal[1*2]);
+        // line.setAttribute("y2", imgfinal[1*2+1]);
+        // line.setAttribute("stroke-width", "10");
+        // line.setAttribute("stroke", `rgb(${r}, ${g}, ${b})`);
+
+        // var line =  document.createElementNS("http://www.w3.org/2000/svg", 'line');
+        // svg.appendChild(line);
+        // line.setAttribute("x1", imgfinal[2*2]);
+        // line.setAttribute("y1", imgfinal[2*2+1]);
+        // line.setAttribute("x2", imgfinal[3*2]);
+        // line.setAttribute("y2", imgfinal[3*2+1]);
+        // line.setAttribute("stroke-width", "10");
+        // line.setAttribute("stroke", `rgb(${r}, ${g}, ${b})`);
+
         for (var i = 0; i<4; ++i){
             var line =  document.createElementNS("http://www.w3.org/2000/svg", 'line');
             svg.appendChild(line);
@@ -710,6 +754,8 @@ class ImageContext extends MovableView{
             line.setAttribute("y1", imgfinal[(4+i)*2+1]);
             line.setAttribute("x2", imgfinal[(4+(i+1)%4)*2]);
             line.setAttribute("y2", imgfinal[(4+(i+1)%4)*2+1]);
+            line.setAttribute("stroke-width", "10");
+            // line.setAttribute("stroke", `rgb(${r}, ${g}, ${b})`);
         }
 
 
@@ -720,6 +766,8 @@ class ImageContext extends MovableView{
             line.setAttribute("y1", imgfinal[i*2+1]);
             line.setAttribute("x2", imgfinal[(i+4)*2]);
             line.setAttribute("y2", imgfinal[(i+4)*2+1]);
+            line.setAttribute("stroke-width", "10");
+            // line.setAttribute("stroke", `rgb(${r}, ${g}, ${b})`);
         }
 
         return svg;

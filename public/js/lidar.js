@@ -1194,34 +1194,34 @@ function Lidar(sceneMeta, world, frameInfo){
 
     this.set_box_points_color=function(box, target_color){
         //var pos = this.points.geometry.getAttribute("position");
-        var color = this.points.geometry.getAttribute("color");
+        // var color = this.points.geometry.getAttribute("color");
 
-        if (!target_color){
-            if (this.data.cfg.color_obj == "category")
-            {
-                target_color = globalObjectCategory.get_color_by_category(box.obj_type);
-            }
-            else if (this.data.cfg.color_obj == "id")// by id
-            {
-                let idx = (box.obj_track_id)?parseInt(box.obj_track_id): box.obj_local_id;
-                target_color = globalObjectCategory.get_color_by_id(idx);
-            }
-            else // no color
-            {
+        // if (!target_color){
+        //     if (this.data.cfg.color_obj == "category")
+        //     {
+        //         target_color = globalObjectCategory.get_color_by_category(box.obj_type);
+        //     }
+        //     else if (this.data.cfg.color_obj == "id")// by id
+        //     {
+        //         let idx = (box.obj_track_id)?parseInt(box.obj_track_id): box.obj_local_id;
+        //         target_color = globalObjectCategory.get_color_by_id(idx);
+        //     }
+        //     else // no color
+        //     {
 
-            }
-        }
+        //     }
+        // }
 
-        if (target_color)
-        {
+        // if (target_color)
+        // {
 
-            var indices = this._get_points_index_of_box(this.points, box, 1.0);
-            indices.forEach(function(i){
-                    color.array[i*3] = target_color.x;
-                    color.array[i*3+1] = target_color.y;
-                    color.array[i*3+2] = target_color.z;
-            });
-        }
+        //     var indices = this._get_points_index_of_box(this.points, box, 1.0);
+        //     indices.forEach(function(i){
+        //             color.array[i*3] = target_color.x;
+        //             color.array[i*3+1] = target_color.y;
+        //             color.array[i*3+2] = target_color.z;
+        //     });
+        // }
         
     };
 

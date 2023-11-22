@@ -110,7 +110,7 @@ def get_one_scene(s):
     # camera names
     camera = []
     camera_ext = ""
-    cams = ["cam-front-undistort"] # 'cam-front', 'cam-left', 'cam-rear', 'cam-right'
+    cams = ['cam-front-undistort']#["Radar", "Camera"] # "cam-front-undistort" # 'cam-front', 'cam-left', 'cam-rear', 'cam-right'
     for c in cams:
         cam_file = os.path.join(scene_dir, c)
         if os.path.isdir(cam_file):

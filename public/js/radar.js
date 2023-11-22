@@ -9,14 +9,14 @@ function Radar(sceneMeta, world, frameInfo, radarName){
     this.sceneMeta = sceneMeta;
     this.coordinatesOffset = world.coordinatesOffset;
 
-    this.showPointsOnly = false;
+    this.showPointsOnly = true;
     this.showRadarBoxFlag = false;
     this.cssStyleSelector = this.sceneMeta.calib.radar[this.name].cssstyleselector;
     this.color = this.sceneMeta.calib.radar[this.name].color;
     this.velocityScale = 0.3;
 
     if (!this.color){
-        this.color = [1.0, 0.0, 0.0];
+        this.color = [0.0, 0.0, 1.0];
     }
 
     this._radar_points_raw = null;  // read from file, centered at 0
@@ -251,7 +251,7 @@ function Radar(sceneMeta, world, frameInfo, radarName){
         if (!pointSize)
             pointSize = 2;
 
-        let material = new THREE.PointsMaterial( { size: pointSize, vertexColors: THREE.VertexColors } );
+        let material = new THREE.PointsMaterial( { size: pointSize, vertexColors: THREE.VertexColors,  transparent: true, opacity: 0.5 } );
         //material.size = 2;
         material.sizeAttenuation = false;
 

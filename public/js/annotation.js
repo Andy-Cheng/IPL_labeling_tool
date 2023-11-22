@@ -277,7 +277,7 @@ function Annotation(sceneMeta, world, frameInfo){
         */
 
         
-        var material = new THREE.LineBasicMaterial( { color: color, linewidth: 1, opacity: this.data.cfg.box_opacity, transparent: true } );
+        var material = new THREE.LineBasicMaterial( { color: color, linewidth: 5, opacity: this.data.cfg.box_opacity, transparent: true } );
         var box = new THREE.LineSegments( bbox, material );
         
         box.scale.x=1.8;
@@ -293,8 +293,9 @@ function Annotation(sceneMeta, world, frameInfo){
         return box;
     };
 
-    this.createCuboid = function(pos, scale, rotation, obj_type, track_id, obj_attr, confidence=-1, split_type=""){
-        let mesh = this.new_bbox_cube(parseInt("0x"+globalObjectCategory.get_obj_cfg_by_type(obj_type).color.slice(1)));
+    this.createCuboid = function(pos, scale, rotation, obj_type, track_id, obj_attr, confidence=-1, split_type="", color=null){
+        // color = color? color : parseInt("0x"+globalObjectCategory.get_obj_cfg_by_type(obj_type).color.slice(1))
+        let mesh = this.new_bbox_cube();
         mesh.position.x = pos.x;
         mesh.position.y = pos.y;
         mesh.position.z = pos.z;
@@ -318,6 +319,10 @@ function Annotation(sceneMeta, world, frameInfo){
         mesh.obj_local_id =  this.get_new_box_local_id();
 
         mesh.world = this.world;
+        if (color){
+            mesh.color = color;
+
+        }
 
         return mesh;
     };
@@ -585,7 +590,8 @@ function Annotation(sceneMeta, world, frameInfo){
             b.obj_id,
             b.obj_attr,
             b.score? b.score : -1,
-            split_type);
+            split_type,
+            b.color? parseInt("0x" + b.color.slice(1)) : null);
         
         if (b.annotator){
             mesh.annotator = b.annotator;
@@ -614,12 +620,25 @@ function Annotation(sceneMeta, world, frameInfo){
 
     this.color_box = function(box)
     {
-        if (this.data.cfg.color_obj == "category" || this.data.cfg.color_obj == "no")
+        if ('color' in box)
+        {
+            let target_color_hex = box.color;
+            let color = {
+                x: (target_color_hex/256/256)/255.0,
+                y: (target_color_hex/256 % 256)/255.0,
+                z: (target_color_hex % 256)/255.0,
+            };
+            box.material.color.r=color.x;
+            box.material.color.g=color.y;
+            box.material.color.b=color.z;
+        }
+        else if (this.data.cfg.color_obj == "category" || this.data.cfg.color_obj == "no")
         {
             let color = globalObjectCategory.get_color_by_category(box.obj_type);
             box.material.color.r=color.x;
             box.material.color.g=color.y;
             box.material.color.b=color.z;
+
         }
         else
         {
